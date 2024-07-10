@@ -1,90 +1,5 @@
-// import React, { useState } from 'react';
-// import axios from 'axios';
-
-// const DataForm = () => {
-//   const [formData, setFormData] = useState({
-//     name: '',
-//     value: '',
-//     image: null,
-//   });
-//   const [submittedData, setSubmittedData] = useState(null);
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({
-//       ...formData,
-//       [name]: value,
-//     });
-//   };
-
-//   const handleFileChange = (e) => {
-//     setFormData({
-//       ...formData,
-//       image: e.target.files[0],
-//     });
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     const formDataObj = new FormData();
-//     formDataObj.append('name', formData.name);
-//     formDataObj.append('value', formData.value);
-//     formDataObj.append('image', formData.image);
-
-//     try {
-//       const response = await axios.post('http://localhost:5000/', formDataObj, {
-//         headers: {
-//           'Content-Type': 'multipart/form-data',
-//         },
-//       });
-//       console.log(response.data);
-//       setSubmittedData(response.data);
-//     } catch (error) {
-//       console.error('There was an error submitting the form:', error);
-//     }
-//   };
-//   return (
-//     <div>
-//       <form onSubmit={handleSubmit}>
-//         <input
-//           type="text"
-//           name="name"
-//           value={formData.name}
-//           onChange={handleChange}
-//           placeholder="Name"
-//           required
-//         />
-//         <input
-//           type="text"
-//           name="value"
-//           value={formData.value}
-//           onChange={handleChange}
-//           placeholder="Value"
-//           required
-//         />
-//         <input
-//           type="file"
-//           name="image"
-//           onChange={handleFileChange}
-//           required
-//         />
-//         <button type="submit">Submit</button>
-//       </form>
-//       {submittedData && (
-//         <div>
-//           <h2>Submitted Data:</h2>
-//           <p>Name: {submittedData.name}</p>
-//           <p>Value: {submittedData.value}</p>
-//           <img src={submittedData.imageUrl} alt={submittedData.name} width="100" />
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default DataForm;
-
 import React, { useState } from "react";
+import axios from "axios"
 
 const RegistrationForm = () => {
   const [formValues, setFormValues] = useState({
@@ -124,6 +39,25 @@ const RegistrationForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("name", formValues.name);
+    formData.append("price", formValues.price);
+    formData.append("category", formValues.category);
+    formData.append("status", formValues.status);
+    formData.append("photo", formValues.photo);
+    formData.append("properties", JSON.stringify(formValues.properties));
+
+    axios.post("http://localhost:5000/api/data", formData, {
+          headers: {
+            "Content-Type":"multipart/form-data",
+          },
+        }).then((response) => {
+          console.log(response.data);
+        }).catch((error) => {
+          console.log(error);
+        });
+
     console.log(formValues);
   };
 
