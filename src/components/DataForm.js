@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./style.css";
-import { GifReader } from "omggif";
+import styles from "./style.module.css";
+import { FaFileImage } from "react-icons/fa";
 
-const RegistrationForm = () => {
+const DataForm = () => {
   const [formValues, setFormValues] = useState({
     name: "",
     price: "",
@@ -14,37 +14,34 @@ const RegistrationForm = () => {
   });
 
   const [frames, setFrames] = useState([]);
-  const [frameNames, setFrameNames] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [imageName, setImageName] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormValues({ ...formValues, [name]: value });
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
   };
+
+  const processImage = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const imageUrl = reader.result;
+      setFrames([{ url: imageUrl, name: file.name }]);
+    };
+  };
+
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
-
-    setFormValues({ ...formValues, photo: file });
-
-    setImageName(file ? file.name : '');
-
-    if((file && file.type) === "image/jpeg" || "image/jpg" || "image/png" || "image/gif"){
-      processGif(file);
-    }
+    setFormValues({
+      ...formValues,
+      photo: file,
+    });
+    processImage(file);
   };
 
-  const processGif = (file) =>{
-    setLoading(true);
-    const reader = new FileReader();
-    reader.readAsArrayBuffer(file);
-    reader.onload = (e) =>{
-      const buffer = new Uint8Array(e.target.result);
-      const gifReader = new GifReader(buffer);
-    }
-  }
-
-  const handlePropertyChange = (index, e) => {
+  const handlePropertiesChange = (index, e) => {
     const { name, value } = e.target;
     const newProperties = formValues.properties.map((property, propIndex) => {
       if (index === propIndex) {
@@ -52,7 +49,11 @@ const RegistrationForm = () => {
       }
       return property;
     });
-    setFormValues({ ...formValues, properties: newProperties });
+
+    setFormValues({
+      ...formValues,
+      properties: newProperties,
+    });
   };
 
   const handleAddProperty = () => {
@@ -64,7 +65,7 @@ const RegistrationForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
     const formData = new FormData();
     formData.append("name", formValues.name);
     formData.append("price", formValues.price);
@@ -72,7 +73,7 @@ const RegistrationForm = () => {
     formData.append("status", formValues.status);
     formData.append("photo", formValues.photo);
     formData.append("properties", JSON.stringify(formValues.properties));
-
+  
     axios
       .post("http://localhost:5000/api/data", formData, {
         headers: {
@@ -81,95 +82,119 @@ const RegistrationForm = () => {
       })
       .then((response) => {
         console.log(response.data);
+        setFormValues({
+          name: "",
+          price: "",
+          category: "",
+          status: "",
+          photo: null,
+          properties: [{ name: "", value: "" }],
+        });
+        setFrames([]);
       })
       .catch((error) => {
         console.log(error);
       });
-
-    console.log(formValues);
   };
-
+  
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Name: </label>
-        <input
-          type="text"
-          name="name"
-          value={formValues.name}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Price: </label>
-        <input
-          type="text"
-          name="price"
-          value={formValues.price}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Category: </label>
-        <input
-          type="text"
-          name="category"
-          value={formValues.category}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Status: </label>
-        <input
-          type="text"
-          name="status"
-          value={formValues.status}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Photo: </label>
-        <input type="file" name="photo" onChange={handlePhotoChange} />
-      </div>
-      <div>
-        <label>Name: </label>
-        <input
-          type="text"
-          name="name"
-          value={formValues.name}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div>
-        <label>Properties</label>
-
-        {formValues.properties.map((property, index) => (
-          <div key={index}>
-            <input
-              type="text"
-              name="name"
-              placeholder="name"
-              value={property.name}
-              onChange={(e) => handlePropertyChange(index, e)}
-            />
-            :
-            <input
-              type="text"
-              name="value"
-              placeholder="value"
-              value={property.value}
-              onChange={(e) => handlePropertyChange(index, e)}
-            />
+    <div className={styles.container}>
+      <div className={styles.title}>პროდუქტის ატვირთვა</div>
+      <form onSubmit={handleSubmit} className={styles.forms}>
+        <div>
+          <input
+            type="text"
+            name="name"
+            value={formValues.name}
+            onChange={handleInputChange}
+            placeholder="პროდუქტის სახელი"
+            required
+            className={styles.nameInput}
+          />
+        </div>
+        <div>
+          <input
+            type="text"
+            name="price"
+            value={formValues.price}
+            onChange={handleInputChange}
+            placeholder="პროდუქტის ფასი"
+            required
+            className={styles.nameInput}
+          />
+        </div>
+        <div>
+          <input
+            type="text"
+            name="category"
+            value={formValues.category}
+            onChange={handleInputChange}
+            placeholder="პროდუქტის კატეგორია"
+            required
+            className={styles.nameInput}
+          />
+        </div>
+        <div>
+          <input
+            type="text"
+            name="status"
+            value={formValues.status}
+            onChange={handleInputChange}
+            placeholder="პროდუქტის მდგომარეობა"
+            required
+            className={styles.nameInput}
+          />
+        </div>
+        <div className={styles.uploadBox}>
+          <input
+            type="file"
+            name="photo"
+            onChange={handlePhotoChange}
+            required
+            className={styles.fileInput}
+          />
+          <div className={styles.iconer}>
+            <FaFileImage />
           </div>
-        ))}
-
+          <div className={styles.placeholder}>
+            Drop Your Image Here, or{" "}
+            <span className={styles.browse}>Browse</span>
+          </div>
+          {frames.length > 0 && <div>{frames[0].name}</div>}
+        </div>
+        <div className={styles.propdiv}>
+          {formValues.properties.map((property, index) => (
+            <div key={index} className={styles.insideprop}>
+              <input
+                type="text"
+                name="name"
+                placeholder="მახასიათებელი"
+                value={property.name}
+                onChange={(e) => handlePropertiesChange(index, e)}
+                className={styles.propInput}
+              />
+              :
+              <input
+                type="text"
+                name="value"
+                placeholder="მნიშვნელობა"
+                value={property.value}
+                onChange={(e) => handlePropertiesChange(index, e)}
+                className={styles.propInput}
+              />
+            </div>
+          ))}
+        </div>
         <button type="button" onClick={handleAddProperty}>
-          +
+          {" "}
+          +{" "}
         </button>
-      </div>
-      <button type="submit">Submit</button>
-    </form>
+        <button type="submit" className={styles.reg}>
+          ატვირთვა
+        </button>
+      </form>
+    </div>
   );
 };
 
-export default RegistrationForm;
+export default DataForm;
