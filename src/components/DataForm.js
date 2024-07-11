@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios"
+import "./style.css"
 
 const RegistrationForm = () => {
   const [formValues, setFormValues] = useState({
@@ -104,7 +105,6 @@ const RegistrationForm = () => {
         <input
           type="file"
           name="photo"
-          value={formValues.photo}
           onChange={handlePhotoChange}
         />
       </div>
