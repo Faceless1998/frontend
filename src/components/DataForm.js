@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios"
-import "./style.css"
+import axios from "axios";
+import "./style.css";
+import { GifReader } from "omggif";
 
 const RegistrationForm = () => {
   const [formValues, setFormValues] = useState({
@@ -12,13 +13,36 @@ const RegistrationForm = () => {
     properties: [{ name: "", value: "" }],
   });
 
+  const [frames, setFrames] = useState([]);
+  const [frameNames, setFrameNames] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [imageName, setImageName] = useState("");
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
   };
   const handlePhotoChange = (e) => {
-    setFormValues({ ...formValues, photo: e.target.files[0] });
+    const file = e.target.files[0];
+
+    setFormValues({ ...formValues, photo: file });
+
+    setImageName(file ? file.name : '');
+
+    if((file && file.type) === "image/jpeg" || "image/jpg" || "image/png" || "image/gif"){
+      processGif(file);
+    }
   };
+
+  const processGif = (file) =>{
+    setLoading(true);
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onload = (e) =>{
+      const buffer = new Uint8Array(e.target.result);
+      const gifReader = new GifReader(buffer);
+    }
+  }
 
   const handlePropertyChange = (index, e) => {
     const { name, value } = e.target;
@@ -49,15 +73,18 @@ const RegistrationForm = () => {
     formData.append("photo", formValues.photo);
     formData.append("properties", JSON.stringify(formValues.properties));
 
-    axios.post("http://localhost:5000/api/data", formData, {
-          headers: {
-            "Content-Type":"multipart/form-data",
-          },
-        }).then((response) => {
-          console.log(response.data);
-        }).catch((error) => {
-          console.log(error);
-        });
+    axios
+      .post("http://localhost:5000/api/data", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     console.log(formValues);
   };
@@ -102,11 +129,7 @@ const RegistrationForm = () => {
       </div>
       <div>
         <label>Photo: </label>
-        <input
-          type="file"
-          name="photo"
-          onChange={handlePhotoChange}
-        />
+        <input type="file" name="photo" onChange={handlePhotoChange} />
       </div>
       <div>
         <label>Name: </label>
