@@ -1,9 +1,9 @@
-import DataForm from "./components/DataForm";
-// import {Home} from "./components/home/Home"
+//import DataForm from "./components/DataForm";
+import {Home} from "./components/home/Home"
 function App () {
   return(
     <>
-      <DataForm />
+      <Home />
     </>
   )
 }
