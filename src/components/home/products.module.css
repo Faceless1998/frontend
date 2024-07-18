@@ -1,40 +1,55 @@
-.container{
+.container {
     width: 100%;
     display: flex;
-    justify-content: center;
-}
-
-.list{
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .controls {
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .controls select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .list {
     width: 90%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     text-align: center;
     gap: 30px;
-}
-
-.item{
+  }
+  
+  .item {
     width: 300px;
     height: 300px;
     margin-bottom: 30px;
-}
-
-.imager{
+  }
+  
+  .imager {
     position: relative;
-}
-
-.additional{
+  }
+  
+  .additional {
     position: absolute;
     display: flex;
     justify-content: center;
-    gap:10px;
+    gap: 10px;
     width: 100%;
     bottom: -26px;
     opacity: 0;
     transition: opacity 0.5s ease-in-out, bottom 0.5s ease-in-out;
-}
-
-.additional > div{
+  }
+  
+  .additional > div {
     width: 40px;
     height: 40px;
     border-radius: 40px;
@@ -43,26 +58,55 @@
     justify-content: center;
     align-items: center;
     font-size: 20px;
-}
-.imager:hover .additional{
+  }
+  
+  .imager:hover .additional {
     opacity: 1;
     bottom: 26px;
-}
-.additional >div:hover{
+  }
+  
+  .additional > div:hover {
     background-color: #7fad39;
     color: white;
     transform: rotate(360deg);
     transition: transform 0.3s ease-in-out;
-}
-
-.name{
+  }
+  
+  .name {
     font-size: 16px;
     font-family: "Cairo", sans-serif;
     font-weight: 400;
-}
-
-.price{
+  }
+  
+  .price {
     font-size: 18px;
     font-family: "Cairo", sans-serif;
     font-weight: 700;
-}
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .pagination button {
+    background-color: #f0f0f0;
+    border: none;
+    color: #333;
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .pagination button:hover {
+    background-color: #ddd;
+  }
+  
+  .pagination button.active {
+    background-color: #007bff;
+    color: white;
+  }
+  

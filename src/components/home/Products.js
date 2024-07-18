@@ -8,6 +8,8 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [sortOption, setSortOption] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const productPerPage = 3;
 
   useEffect(() => {
     fetchProducts();
@@ -36,7 +38,7 @@ const Products = () => {
     setSelectedCategory(e.target.value);
   };
 
-  const sertedAndFilteredProducts = () => {
+  const sortedAndFilteredProducts = () => {
     let sortedProducts = [...products];
 
     if (selectedCategory) {
@@ -44,6 +46,7 @@ const Products = () => {
         (product) => product.category === selectedCategory
       );
     }
+
     switch (sortOption) {
       case "name":
         sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
@@ -65,6 +68,18 @@ const Products = () => {
     return sortedProducts;
   };
 
+  const indexOfLastProduct = currentPage * productPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productPerPage;
+
+  const currentProducts = sortedAndFilteredProducts().slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  const pagination = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.controls}>
@@ -83,7 +98,7 @@ const Products = () => {
       </div>
 
       <div className={styles.list}>
-        {sertedAndFilteredProducts().map((product) => (
+        {currentProducts.map((product) => (
           <div className={styles.item} key={product._id}>
             <div className={styles.imager}>
               <img
@@ -106,6 +121,23 @@ const Products = () => {
             <div className={styles.price}>{product.price}</div>
           </div>
         ))}
+      </div>
+
+      <div className={styles.pagination}>
+        {Array.from(
+          {
+            length: Math.ceil(
+              sortedAndFilteredProducts().length / productPerPage
+            ),
+          },
+          (_, index) => (
+            <button key={index} onClick={ () => pagination(index + 1)}
+            className={currentPage === index + 1 ? styles.active : ""}
+            >
+              {index + 1}
+            </button>
+          )
+        )}
       </div>
     </div>
   );
